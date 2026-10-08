@@ -8,6 +8,28 @@ Welcome to my **Competitive Programming (CP) Repository**!
 
 ---
 
+## 📊 Problem Solving Statistics & Metrics
+
+I have solved **700+ problems** across various competitive programming platforms:
+
+* 🟢 **Codeforces**: **400+ Problems Solved** | **Max Rating: 1451 (Specialist)**
+* 🟡 **LeetCode**: **100+ Problems Solved** (Data Structures, Algorithms & Advanced Topics)
+* 🔵 **Other Educational Platforms**: **200+ Problems Solved** (GeeksforGeeks, CodeChef, HackerRank & Educational Portals)
+
+### 📈 Profile Analytics & Performance Showcase
+
+<div align="center">
+  <img src="./assets/profile_header.png" alt="Codeforces Profile Header" width="90%"/>
+  <br/><br/>
+  <img src="./assets/tags_solved.png" alt="Tags Solved Analytics" width="90%"/>
+  <br/><br/>
+  <img src="./assets/problem_ratings_heatmap.png" alt="Rating-Based Heatmap and Problem Ratings" width="90%"/>
+  <br/><br/>
+  <img src="./assets/contest_history.png" alt="Contest History and Rating Progression" width="90%"/>
+</div>
+
+---
+
 > [!NOTE]  
 > **Private Contests & Problem Setting**: I have conducted numerous private contests and served as a **Problem Setter** for my college contests as well as several private Discord competitive programming groups. A separate folder dedicated to my problem-setting work and problem sets will be added here soon!
 
