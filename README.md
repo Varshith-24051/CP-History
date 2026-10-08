@@ -30,8 +30,20 @@ I have solved **700+ problems** across various competitive programming platforms
 
 ---
 
+## ✍️ Problem Setting & Contest Authoring
+
+I actively author and set problems for private contests, college competitive programming challenges, and private Discord CP groups. The problem difficulty ranges from **Div 2 / Div 1+ (1600+ to 2000+ rating)** down to intermediate/introductory levels (**900 to 1200 rating**).
+
+Here are some of the authored problem statements available in the [`Problem_Setting/`](./Problem_Setting/) directory:
+
+* 📄 [`VARSH_PROBLEMS.html`](./Problem_Setting/VARSH_PROBLEMS.html) — Master Compiled Problem Set & Testcases HTML.
+* 📄 [`problem2000.pdf`](./Problem_Setting/problem2000.pdf) — **2000-Rated** Advanced Algorithmic Problem Statement (Div 2 Hard / Div 1).
+* 📄 [`Cookie_Empire.pdf`](./Problem_Setting/Cookie_Empire.pdf) & [`Cookie_Empire-2.pdf`](./Problem_Setting/Cookie_Empire-2.pdf) — **1600+ Rated** Div 2 Contest Problem Statements.
+* 📄 [`Balanced Mirror Sum`](./Problem_Setting/Balanced%20Mirror%20Sum%20(1)%20(1).pdf) — Interactive / Array Symmetry & Mirror Sum Problem.
+* 📄 [`problem900.pdf`](./Problem_Setting/problem900.pdf) — **900–1200 Rated** Introductory / Mid-level Contest Problem.
+
 > [!NOTE]  
-> **Private Contests & Problem Setting**: I have conducted numerous private contests and served as a **Problem Setter** for my college contests as well as several private Discord competitive programming groups. A separate folder dedicated to my problem-setting work and problem sets will be added here soon!
+> *Additional old curated problem statements and archived contest sets will be continuously uploaded to this folder as they are retrieved.*
 
 ---
 
@@ -56,6 +68,7 @@ A core highlight of this repository is [`LEARNINGS.cpp`](./LEARNINGS.cpp).
 * **Codeforces Problem Solutions**: Solutions categorized by problem index (`A_*.cpp`, `B_*.cpp`, `C_*.cpp`, `D_*.cpp`, `E_*.cpp`, `F_*.cpp`, `G_*.cpp`, `H_*.cpp`).
 * **Topic-Specific Files & Folders**:
   * `LEARNINGS.cpp` - Master learning log and cheat sheet.
+  * `Problem_Setting/` - Authored problem statements (PDFs & HTML testcases for 900–2000 rated problems).
   * `GRAPHS_LEARNING.cpp` - Graph algorithms & traversal implementations.
   * `DP/` - Dynamic Programming solutions and templates.
   * `DAA_*.cpp` - Design & Analysis of Algorithms course implementations (Fibonacci, Power Calc, Sorting).

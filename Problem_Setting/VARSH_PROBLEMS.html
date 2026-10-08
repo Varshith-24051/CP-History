@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VARSH Management Problems</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: Verdana, Arial, sans-serif;
+            font-size: 15px;
+            line-height: 1.5em;
+            color: #222;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .meta {
+            font-size: 13px;
+            color: #444;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-top: 0;
+            margin-bottom: 1em;
+        }
+        .example-box {
+            border: 1px solid #ccc;
+            margin-bottom: 40px;
+        }
+        .example-header {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .example-content {
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            background-color: #f8f8f8;
+            padding: 10px;
+            margin: 0;
+            white-space: pre;
+        }
+        code {
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            font-weight: bold;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background: #ccc;
+            margin: 50px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="title">B. VARSH Management</div>
+        <div class="meta">
+            time limit per test: 1 second<br>
+            memory limit per test: 256 megabytes<br>
+            input: standard input<br>
+            output: standard output
+        </div>
+    </div>
+
+    <p>VARSH is optimizing the sorting facility for a new manufacturing plant. The facility features a large circular conveyor belt consisting of \(n\) discrete boxes (where \(n\) is an even integer), indexed from \(0\) to \(n-1\) in a clockwise direction.</p>
+    
+    <p>There are two specialized workers stationed at the belt. Worker A is permanently stationed at box index \(0\) and strictly collects Waste Paper, denoted by the character <code>W</code>. Worker B is permanently stationed at the opposite end at box index \(\frac{n}{2}\) and collects Plastic and Glass, denoted by the characters <code>P</code> and <code>G</code>.</p>
+    
+    <p>The conveyor belt motor is currently restricted and can only rotate in the clockwise direction. Rotating the entire belt clockwise by exactly one box position consumes \(x\) units of energy. When a box containing waste arrives at a worker's index, the worker instantly removes all the waste they are responsible for at zero energy cost.</p>
+    
+    <p>You are given the initial contents of all \(n\) boxes. Each box contains a string of characters representing the waste inside it. Empty boxes are represented by the character <code>.</code> (a period).</p>
+    
+    <p>Find the minimum total energy the plant needs to spend to completely clear all <code>W</code>, <code>P</code>, and <code>G</code> waste from the conveyor belt.</p>
+
+    <div class="section-title">Input</div>
+    <p>Each test contains multiple test cases. The first line contains the number of test cases \(t\) (\(1 \le t \le 10^4\)). The description of the test cases follows.</p>
+    <p>The first line of each test case contains two integers \(n\) and \(x\) (\(2 \le n \le 2 \cdot 10^5\); \(n\) is even; \(1 \le x \le 10^9\)) — the number of boxes and the energy cost per clockwise shift.</p>
+    <p>The next \(n\) lines describe the boxes. The \(i\)-th line contains a string \(s_i\) (\(1 \le |s_i| \le \frac{n}{2}\)) representing the waste in the \(i\)-th box. The string consists only of characters <code>W</code>, <code>P</code>, <code>G</code>, or <code>.</code>.</p>
+    <p>It is guaranteed that the sum of \(n\) over all test cases does not exceed \(2 \cdot 10^5\), and the total length of all strings \(s_i\) over all test cases does not exceed \(2 \cdot 10^5\).</p>
+
+    <div class="section-title">Output</div>
+    <p>For each test case, output a single integer — the minimum energy required to clear all waste.</p>
+
+    <div class="section-title">Example</div>
+    <div class="example-box">
+        <div class="example-header">input</div>
+        <div class="example-content">2
+4 10
+W
+P
+.
+.
+6 5
+.
+WPG
+.
+.
+.
+G</div>
+        <div class="example-header">output</div>
+        <div class="example-content">30
+25</div>
+    </div>
+
+    <hr>
+
+    <div class="header">
+        <div class="title">D. VARSH Management (Unstable)</div>
+        <div class="meta">
+            time limit per test: 3 seconds<br>
+            memory limit per test: 256 megabytes<br>
+            input: standard input<br>
+            output: standard output
+        </div>
+    </div>
+
+    <p>VARSH has upgraded the manufacturing plant's recycling facility, but the local power grid is highly unstable. The circular conveyor belt still has \(n\) boxes, indexed from \(0\) to \(n-1\) in a clockwise direction.</p>
+    
+    <p>There are two specialized workers stationed at the belt. Worker A (who collects <code>W</code>) starts at a given index \(p_A\). Worker B (who collects <code>P</code> and <code>G</code>) starts at a given index \(p_B\).</p>
+    
+    <p>The new motor is bi-directional. Rotating the belt clockwise by one box consumes \(x\) units of energy, while rotating it anti-clockwise consumes \(y\) units of energy.</p>
+    
+    <p>Due to the unstable grid, the facility experiences a system overload. Every time exactly \(E\) units of total energy have been consumed since the start of the shift, the conveyor belt temporarily halts and the workers go for a much-needed break. Upon returning to the factory floor, Worker A and Worker B have the option to instantly swap their physical positions (Worker A moves to the index currently occupied by Worker B, and vice versa) at zero energy cost before restarting the belt. They may also choose to remain in their current positions.</p>
+    
+    <p>Given the initial contents of the \(n\) boxes, find the absolute minimum energy required to clear all waste from the belt, optimally utilizing the system overloads and breaks to swap workers if necessary.</p>
+
+    <div class="section-title">Input</div>
+    <p>Each test contains multiple test cases. The first line contains the number of test cases \(t\) (\(1 \le t \le 10^4\)). The description of the test cases follows.</p>
+    <p>The first line of each test case contains six integers \(n\), \(x\), \(y\), \(E\), \(p_A\), and \(p_B\) (\(2 \le n \le 2 \cdot 10^5\); \(n\) is even; \(1 \le x, y, E \le 10^9\); \(0 \le p_A, p_B < n\); \(p_A \neq p_B\)) — the number of boxes, clockwise cost, anti-clockwise cost, the overload energy threshold, and the starting indices of Worker A and Worker B.</p>
+    <p>The next \(n\) lines describe the boxes. The \(i\)-th line contains a string \(s_i\) (\(1 \le |s_i| \le \frac{n}{2}\)) representing the waste in the \(i\)-th box. The string consists only of characters <code>W</code>, <code>P</code>, <code>G</code>, or <code>.</code>.</p>
+    <p>It is guaranteed that the sum of \(n\) over all test cases does not exceed \(2 \cdot 10^5\), and the total length of all strings \(s_i\) over all test cases does not exceed \(2 \cdot 10^5\).</p>
+
+    <div class="section-title">Output</div>
+    <p>For each test case, output a single integer — the minimum total energy required to clear all waste.</p>
+
+    <div class="section-title">Example</div>
+    <div class="example-box">
+        <div class="example-header">input</div>
+        <div class="example-content">2
+4 10 2 12 0 2
+W
+.
+.
+P
+6 5 5 10 1 4
+WPG
+.
+.
+.
+.
+W</div>
+        <div class="example-header">output</div>
+        <div class="example-content">4
+15</div>
+    </div>
+
+</body>
+</html>
