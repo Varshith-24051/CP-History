@@ -1,6 +1,12 @@
 # Competitive Programming & Codeforces Solutions History 🚀
 
-Welcome to my **Competitive Programming (CP) Repository**! This repository serves as a archive of my problem-solving journey across Codeforces, algorithmic courses (DAA, Graph Theory, Dynamic Programming), and competitive contests.
+Welcome to my **Competitive Programming (CP) Repository**! 
+
+> [!IMPORTANT]
+> 🌟 **MAIN ATTRACTION**: Check out [`LEARNINGS.cpp`](https://github.com/Varshith-24051/CP-History/blob/main/LEARNINGS.cpp)!  
+> Ever since my 2nd year, I have been continuously developing this master note capturing everything I've learned during my preparation for **Codeforces** and **ICPC**. I am currently a **Specialist** on Codeforces with a **Max Rating of 1451**. This single file aggregates almost all the algorithmic knowledge, STL tricks, and problem-solving methodologies I have gained from grinding through the **CP-31 sheet** and hundreds of Codeforces problems over the past **~11 months**.
+
+---
 
 > [!NOTE]  
 > **Private Contests & Problem Setting**: I have conducted numerous private contests and served as a **Problem Setter** for my college contests as well as several private Discord competitive programming groups. A separate folder dedicated to my problem-setting work and problem sets will be added here soon!
@@ -11,7 +17,7 @@ Welcome to my **Competitive Programming (CP) Repository**! This repository serve
 
 A core highlight of this repository is [`LEARNINGS.cpp`](./LEARNINGS.cpp).
 
-* **What it is**: `LEARNINGS.cpp` is a continuous log of concepts, STL tricks, mathematical shortcuts, bitwise hacks, prefix-sum methods, graph algorithms, and DP patterns accumulated **day-by-day and contest-by-contest** since the very beginning of my CP journey.
+* **What it is**: `LEARNINGS.cpp` is a continuous log of concepts, STL tricks, mathematical shortcuts, bitwise hacks, prefix-sum methods, graph algorithms, and DP patterns accumulated **day-by-day and contest-by-contest** since the very beginning of my CP journey (~11 months).
 * **Purpose**: It is **not a newly created file**—it is an old, actively maintained master reference file that I regularly use for revising methodologies, edge cases, and algorithmic templates prior to and during contests.
 * **Topics Included**:
   * STL Utilities & Fast I/O (`min_element`, `is_sorted`, `rotate`, `iota`, `exchange`)
@@ -37,7 +43,7 @@ A core highlight of this repository is [`LEARNINGS.cpp`](./LEARNINGS.cpp).
 
 ## 👤 Profiles & Important Note
 
-* **Codeforces Profile**: [Your_Fav_Varsh](https://codeforces.com/profile/Your_Fav_Varsh)
+* **Codeforces Profile**: [Your_Fav_Varsh](https://codeforces.com/profile/Your_Fav_Varsh) (Specialist | Max Rating: 1451)
 
 ### ⚠️ Important Note Regarding Profile Status
 
