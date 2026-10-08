@@ -1,0 +1,49 @@
+#include <bits/stdc++.h> 
+using namespace std;
+
+int ans = 0; 
+int queens[15];
+
+bool possible(int r, int c) {
+    for (int rr = 0; rr < r; rr++) {
+        int cc = queens[rr];
+        
+        if (cc == c || abs(rr - r) == abs(cc - c)) return false; 
+
+        int row_d = abs(rr - r);
+        int col_d = abs(cc - c);
+        if ((row_d == 1 && col_d == 2) || (row_d == 2 && col_d == 1)) return false;
+    }
+    return true; 
+}
+
+void solve(int row, int n) {
+    if (row == n) {
+        ans++; 
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        if (possible(row, i)) {
+            queens[row] = i; 
+            solve(row + 1, n);
+        }
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    if (!(cin >> n)) return 0;
+
+    if (n == 2 || n == 3) {
+        cout << 0 << endl;
+        return 0;
+    }
+
+    solve(0, n);
+    cout << ans << endl;
+
+    return 0;
+}

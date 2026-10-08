@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FoodioHub</title>
+    <style>
+        .signup-btn {
+
+             background:var(--green);
+            color:#fff;
+            padding:6px 12px;
+            border-radius:8px;
+            display:inline-block;
+}
+        :root{
+            --green: #14996a;
+            --muted: #666;
+            --bg: #e4e4e4;
+            --card-bg: #fff;
+        }
+        *{box-sizing:border-box}
+        body{
+            margin:0;
+            font-family: "Gill Sans", "Trebuchet MS", Arial, sans-serif;
+            background:var(--bg);
+            color:#222;
+        }
+
+        header{
+            background:#d3d0d0;
+            padding:18px 24px;
+        }
+        .header-inner{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:16px;
+            max-width:1100px;
+            margin:0 auto;
+        }
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            color:var(--green);
+            font-weight:700;
+            font-size:1.25rem;
+        }
+        nav ul{
+            list-style:none;
+            display:flex;
+            gap:18px;
+            padding:0;
+            margin:0;
+            align-items:center;
+            color:#575757;
+        }
+        nav a{
+            color:#575757;
+            text-decoration:none;
+            font-size:0.95rem;
+        }
+
+        main{
+            max-width:1100px;
+            margin:18px auto;
+            padding:0 16px 36px;
+        }
+
+        .top-row{
+            display:flex;
+            align-items:center;
+            gap:14px;
+            margin-bottom:12px;
+        }
+        .badge{
+            background:var(--green);
+            color:#fff;
+            padding:6px 12px;
+            border-radius:8px;
+            display:inline-block;
+        }
+
+        .cards{
+            display:flex;
+            gap:18px;
+            flex-wrap:wrap;
+            justify-content:center;
+        }
+        .card{
+            background:var(--card-bg);
+            width:320px;
+            border-radius:8px;
+            padding:14px;
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+            box-shadow:0 2px 6px rgba(0,0,0,0.06);
+        }
+        .card img{
+            width:100%;
+            height:200px;
+            object-fit:cover;
+            border-radius:6px;
+            display:block;
+        }
+        .card h3{
+            margin:0;
+            font-size:1.05rem;
+            font-weight:700;
+        }
+        .card p{
+            margin:0;
+            color:var(--muted);
+            line-height:1.3;
+        }
+        .card .price{
+            text-align :left;
+            margin-top:auto; 
+            color: #0c8856;
+            font-weight:700;
+            font-size:1rem;
+            align-self:flex-end;
+        }
+
+        footer.site{
+            background:#18191f;
+            color:#eef0f2;
+            text-align:center;
+            padding:10px 8px;
+        }
+
+        @media (max-width:760px){
+            .header-inner{padding:0 8px}
+            .card{width:100%; max-width:520px}
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <div class="brand">🍔 FoodioHub</div>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Menu</a></li>
+                    <li><a href="#">Offers</a></li>
+                    <li><a href="#">Cart</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+                <search>
+                    <p>
+                        Search food items
+                    </p>
+                </search>
+            </nav>
+
+        </div>
+    </header>
+
+    <main>
+        <div class="top-row">
+            <strong style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Menu Items</strong>
+            <div class="badge">Top Picks</div>
+        </div>
+
+        <section class="cards">
+            <article class="card">
+        <img src="https://www.foodandwine.com/thmb/iJw7N_NfcPpd-EB8rpYbzrkSFIM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/tomato-mozzarella-pizza-FT-RECIPE0725-e7244e979c504188a049623668c15b2e.jpg" alt="Margherita Pizza">
+        <h3>Margherita Pizza</h3>
+        <p>Classic Italian pizza with fresh tomato, mozzarella and basil.</p>
+                <div class="price">₹299</div>
+                <button class="signup-btn" style=" width: 100px;;">order Now</button>
+            </article>
+
+            <article class="card">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwnsmyoAPUYUzNTCnViS8TdV1HmraRgf5MRg&s" alt="Pizza 2">
+        <h3>Margherita Pizza</h3>
+        <p>Classic Italian pizza with fresh tomato, mozzarella and basil.</p>
+        <div class="price" style >₹299</div>
+        <button class="signup-btn" style=" width: 100px;;">order Now</button>
+            </article>
+
+        <article class="card">
+        <img src="data:image/jpeg;base64,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" alt="Pizza 3">
+        <h3>Margherita Pizza</h3>
+        <p>Classic Italian pizza with fresh tomato, mozzarella and basil.</p>
+        <div class="price">₹299</div>
+        <button class="signup-btn" style=" width: 100px;;">order Now</button>
+            </article>
+        </section>
+    </main>
+
+    <footer class="site">
+        <p style="margin:0">© 2025 FoodioHub | About | Contact</p>
+    </footer>
+</body>
+</html>

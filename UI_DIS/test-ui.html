@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContextSync Ultimate</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        /* --- THEME --- */
+        :root {
+            --bg: #0d1117;
+            --card-bg: #161b22;
+            --border: #30363d;
+            --text-main: #e6edf3;
+            --text-mute: #8b949e;
+            --accent: #58a6ff;
+            --danger: #f85149;
+            --success: #3fb950;
+            
+            /* BRANDS */
+            --slack: #E01E5A; --jira: #0052CC; --github: #ffffff;
+            --confluence: #2684FF; --trello: #0079BF; --notion: #ffffff;
+            --teams: #6264A7; --discord: #5865F2; --whatsapp: #25D366; --telegram: #2481cc;
+
+            --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            --font-mono: "SF Mono", "Monaco", monospace;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            margin: 0; padding: 0;
+            height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- HEADER --- */
+        .hud-header {
+            flex: 0 0 auto; padding: 12px 16px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(10px); z-index: 10;
+        }
+        .brand { font-weight: 700; font-size: 11px; letter-spacing: 1px; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+        .dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; box-shadow: 0 0 6px var(--success); }
+        
+        .tabs { display: flex; background: #000; padding: 3px; border-radius: 6px; border: 1px solid var(--border); }
+        .tab { padding: 4px 12px; font-size: 10px; font-weight: 600; cursor: pointer; color: var(--text-mute); border-radius: 4px; transition: 0.2s; }
+        .tab:hover { color: var(--text-main); }
+        .tab.active { background: var(--border); color: var(--text-main); }
+
+        /* --- SCROLL ZONE --- */
+        .scroll-zone { 
+            flex: 1; overflow-y: auto; padding: 15px; 
+            display: flex; flex-direction: column; position: relative;
+            padding-bottom: 140px; /* Space for fixed footer */
+        }
+        .scroll-zone::-webkit-scrollbar { display: none; }
+
+        #list-view { display: flex; flex-direction: column; width: 100%; min-height: 100%; }
+        #results-container { display: flex; flex-direction: column; gap: 12px; }
+        #graph-view { width: 100%; height: 100%; display: none; justify-content: center; align-items: center; }
+        #welcome-msg { text-align: center; margin-top: 60px; opacity: 0.5; font-size: 10px; font-family: var(--font-mono); }
+
+        /* CARDS */
+        .tech-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .card-header { padding: 8px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; }
+        .card-body { padding: 12px; font-size: 11px; line-height: 1.4; color: #d1d5db; }
+        .card-meta { padding: 6px 12px; background: rgba(0,0,0,0.2); font-size: 9px; color: var(--text-mute); font-family: var(--font-mono); display: flex; justify-content: space-between; }
+        
+        .card-risk { border-left: 3px solid var(--danger); background: rgba(248, 81, 73, 0.05); } .card-risk .card-header { color: var(--danger); }
+        .card-slack { border-left: 3px solid var(--slack); } .card-slack .card-header { color: var(--slack); }
+        .card-jira { border-left: 3px solid var(--jira); } .card-jira .card-header { color: var(--jira); }
+        
+        .section-label { font-size: 10px; font-weight: 700; color: var(--text-mute); margin-top: 15px; border-bottom: 1px solid var(--border); padding-bottom: 5px; display: flex; justify-content: space-between; font-family: var(--font-mono); letter-spacing: 1px; }
+
+        /* --- FLOATING COMMAND CENTER --- */
+        .control-panel {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(13, 17, 23, 0.8);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border);
+            padding: 10px 16px;
+            display: flex; flex-direction: column; gap: 8px;
+            z-index: 50;
+        }
+
+        /* 1. Model Selector (Top Center Pill) */
+        .model-selector-row { display: flex; justify-content: center; margin-bottom: 2px; }
+        .model-pill {
+            background: #000; border: 1px solid var(--border); border-radius: 12px;
+            padding: 3px 10px; display: flex; align-items: center; gap: 6px;
+            cursor: pointer; transition: 0.2s; font-size: 10px; font-weight: 600; color: var(--text-mute);
+            font-family: var(--font-mono); box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .model-pill:hover { border-color: var(--accent); color: var(--text-main); }
+        .model-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; box-shadow: 0 0 5px var(--success); }
+
+        /* 2. Main Composer Bar */
+        .composer-bar {
+            display: flex; align-items: center; gap: 0; 
+            background: #0d1117; border: 1px solid var(--border); border-radius: 8px;
+            padding: 4px; transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .composer-bar:focus-within { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+
+        /* Left: Agent Trigger */
+        .agent-trigger {
+            display: flex; align-items: center; gap: 6px;
+            padding: 6px 10px; border-radius: 6px; cursor: pointer;
+            background: rgba(255, 255, 255, 0.03); color: var(--text-mute);
+            font-size: 10px; font-weight: 600; font-family: var(--font-mono);
+            border-right: 1px solid var(--border); margin-right: 4px;
+            transition: 0.2s;
+        }
+        .agent-trigger:hover { background: rgba(255, 255, 255, 0.08); color: var(--text-main); }
+        /* The User's Custom Agent SVG */
+        .agent-icon { width: 16px; height: 16px; fill: currentColor; }
+
+        /* Center: Input Box */
+        .input-wrapper { flex: 1; position: relative; display: flex; align-items: center; }
+        
+        .input-box {
+            background: transparent; border: none; color: var(--text-main);
+            padding: 8px 30px 8px 10px; /* Right padding for the Gemini icon */
+            font-family: var(--font-ui); font-size: 12px;
+            resize: none; height: 32px; outline: none; width: 100%;
+            overflow-y: scroll; scrollbar-width: none;
+            line-height: 1.4;
+        }
+        .input-box::-webkit-scrollbar { display: none; }
+
+        /* The Gemini Sparkle (Inside Input) */
+        .ai-sparkle {
+            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+            width: 14px; height: 14px; fill: var(--text-mute); 
+            opacity: 0.5; pointer-events: none; transition: 0.3s;
+        }
+        .input-box:focus + .ai-sparkle { fill: var(--accent); opacity: 1; filter: drop-shadow(0 0 4px var(--accent)); }
+
+        /* Right: Actions */
+        .action-group { display: flex; align-items: center; gap: 6px; padding-left: 6px; border-left: 1px solid var(--border); }
+
+        /* Connect Button */
+        .icon-btn {
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            border-radius: 6px; cursor: pointer; color: var(--text-mute); background: transparent; border: none;
+            transition: 0.2s;
+        }
+        .icon-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.1); }
+        .icon-btn.active { color: var(--accent); background: rgba(88, 166, 255, 0.1); }
+
+        /* Analyze Button */
+        .analyze-btn {
+            background: var(--accent); color: #fff; border: none; 
+            padding: 0 12px; height: 32px; border-radius: 6px; 
+            font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+            cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s;
+        }
+        .analyze-btn:hover { background: #4f94e3; box-shadow: 0 0 10px rgba(88, 166, 255, 0.2); }
+        .analyze-btn.scanning { background: var(--success); cursor: wait; }
+
+        /* --- MENUS --- */
+        .popup-menu {
+            position: absolute; bottom: 100%; margin-bottom: 8px;
+            background: #161b22; border: 1px solid var(--border); border-radius: 6px;
+            padding: 4px; display: flex; flex-direction: column; gap: 2px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            opacity: 0; pointer-events: none; transform: translateY(10px);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100;
+        }
+        .popup-menu.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+        .menu-item {
+            padding: 8px 12px; font-size: 11px; cursor: pointer; border-radius: 4px;
+            color: var(--text-mute); display: flex; align-items: center; gap: 8px; font-weight: 500;
+        }
+        .menu-item:hover { background: var(--accent); color: #fff; }
+        .menu-item.selected { color: var(--accent); background: rgba(88, 166, 255, 0.1); }
+        .menu-header { font-size: 9px; font-weight: bold; color: var(--text-mute); padding: 4px 12px; opacity: 0.6; margin-top: 4px; border-bottom: 1px solid var(--border); margin-bottom: 2px; }
+
+        /* Menu Positions */
+        #model-menu { left: 50%; transform: translateX(-50%) translateY(10px); width: 200px; }
+        #model-menu.visible { transform: translateX(-50%) translateY(0); }
+        
+        #agent-menu { left: 16px; width: 180px; bottom: 85px; }
+        
+        /* Connections Slider */
+        #conn-menu { 
+            right: 16px; left: 16px; height: auto; bottom: 85px;
+            flex-direction: row; overflow-x: auto; gap: 14px; padding: 12px;
+            justify-content: flex-start;
+        }
+        #conn-menu::-webkit-scrollbar { display: none; }
+
+        .slider-icon { width: 24px; height: 24px; flex-shrink: 0; fill: #555; cursor: pointer; transition: 0.2s; }
+        .slider-icon:hover { fill: #fff; transform: scale(1.1); }
+        .slider-icon.connected { opacity: 1; }
+        /* Connection Colors */
+        .slider-icon.connected.slack { fill: var(--slack); filter: drop-shadow(0 0 6px var(--slack)); }
+        .slider-icon.connected.jira { fill: var(--jira); filter: drop-shadow(0 0 6px var(--jira)); }
+        .slider-icon.connected.github { fill: var(--github); filter: drop-shadow(0 0 6px var(--github)); }
+        .slider-icon.connected.confluence { fill: #2684FF; filter: drop-shadow(0 0 6px #2684FF); }
+        .slider-icon.connected.trello { fill: var(--trello); filter: drop-shadow(0 0 6px var(--trello)); }
+        .slider-icon.connected.notion { fill: var(--notion); filter: drop-shadow(0 0 6px var(--notion)); }
+        .slider-icon.connected.teams { fill: var(--teams); filter: drop-shadow(0 0 6px var(--teams)); }
+        .slider-icon.connected.discord { fill: var(--discord); filter: drop-shadow(0 0 6px var(--discord)); }
+        .slider-icon.connected.whatsapp { fill: var(--whatsapp); filter: drop-shadow(0 0 6px var(--whatsapp)); }
+        .slider-icon.connected.telegram { fill: var(--telegram); filter: drop-shadow(0 0 6px var(--telegram)); }
+
+        /* Local Memory Status */
+        .memory-status {
+            font-size: 9px; color: var(--text-mute); font-family: var(--font-mono);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 4px; opacity: 0.6; margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hud-header">
+        <div class="brand"><div class="dot"></div> CONTEXTSYNC</div>
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('list', this)">INTEL</div>
+            <div class="tab" onclick="switchTab('graph', this)">GRAPH</div>
+        </div>
+    </div>
+
+    <div class="scroll-zone">
+        <div id="list-view">
+            <div id="welcome-msg">
+                // COMMAND CENTER READY.<br>
+                // AWAITING INPUT.
+            </div>
+            <div id="results-container"></div>
+        </div>
+        <div id="graph-view"><div id="mermaid-container"></div></div>
+    </div>
+
+    <div class="control-panel">
+        
+        <div class="model-selector-row">
+            <div class="model-pill" onclick="toggleMenu('model-menu')">
+                <span class="model-dot"></span>
+                <span id="current-model">Gemini 1.5 Pro</span>
+                <span style="font-size:8px; opacity:0.5;">▼</span>
+            </div>
+        </div>
+
+        <div class="composer-bar">
+            
+            <div class="agent-trigger" onclick="toggleMenu('agent-menu')" title="Select Specialist">
+                <svg class="agent-icon" viewBox="0 0 200 200"><path d="M84.232 133.197c-1.715 4.397-5.97 7.543-11.002 7.543-6.577 0-11.902-5.306-11.902-11.855 0-6.529 5.325-11.835 11.902-11.835 5.032 0 9.287 3.127 11.002 7.543l-8.633 4.292 8.633 4.312zm55.455.038c-1.715 4.416-5.98 7.553-11.002 7.553-6.586 0-11.902-5.307-11.902-11.846 0-6.538 5.326-11.845 11.902-11.845 5.023 0 9.287 3.127 11.002 7.543l-8.642 4.302 8.642 4.293zm48.737-1.061c-1.365 5.041-4.672 9.04-8.908 11.438a18.841 18.841 0 0 1-11.808 4.131c-.227 0-.454-.019-.672-.066-7.108 31.139-33.063 52.318-66.875 52.318-33.887 0-59.833-21.122-66.978-52.252a18.747 18.747 0 0 1-9.77-2.796c-5.61-2.009-10.177-6.624-11.836-12.774-2.227-8.273.824-14.176 4.72-18.08a127.782 127.782 0 0 1-.048-6.909c-.512-25.604 7.164-47.21 22.203-62.495C45.616 37.402 54.334 31.81 64.322 28 65.876 14.128 81 3.211 99.375 3.211c18.374 0 33.499 10.917 35.053 24.79 9.987 3.81 18.706 9.4 25.88 16.687 15.02 15.286 22.695 36.93 22.193 62.62.038 1.895.028 3.79-.02 5.647 4.436 3.858 8.397 10.093 5.943 19.219zM99.374 9.532c-13.683 0-25.178 6.917-28.106 16.166 8.538-2.426 17.872-3.667 27.86-3.667h.484c9.997 0 19.331 1.241 27.87 3.667-2.929-9.249-14.423-16.166-28.107-16.166zm73.053 97.767c.474-23.085-6.207-42.265-19.322-55.588-12.64-12.86-31.139-19.654-53.493-19.654l-.256.01-.228-.01c-22.345 0-40.842 6.794-53.484 19.654-13.115 13.323-19.796 32.503-19.322 55.464-.01.266-.01.512-.01.768 4.757-1.251 8.292 2.35 8.804 2.71 17.815-5.894 25.595-24.704 25.671-24.904a3.18 3.18 0 0 1 4.123-1.762c1.63.654 2.425 2.482 1.771 4.103-.36.91-8.69 21.217-28.741 28.277-.256 4.132-.493 8.434-.445 9.97l.066 3.572c0 37.573 25.69 63.766 62.477 63.766.047 0 .19 0 .237.01 28.675-.01 50.632-16.025 58.848-40.948a65.694 65.694 0 0 1-3.194 3.487c-6.89 7.041-15.124 12.518-24.468 16.271-6.538 2.635-13.513 4.378-20.829 5.212-.815 3.222-5.003 5.686-10.092 5.686-5.676 0-10.272-3.051-10.272-6.823 0-3.762 4.595-6.823 10.272-6.823 3.999 0 7.448 1.535 9.135 3.753 22.686-2.473 41.004-13.987 52.035-31.547.606-3.847.919-7.846.919-11.987l.018-.56c-.104-.104-.208-.207-.293-.321-8.586-11.097-21.19-13.76-34.532-16.575-6.643-1.402-13.523-2.852-20.232-5.391C83.256 97.927 70.35 76.728 69.81 75.828a3.154 3.154 0 0 1 1.099-4.331 3.174 3.174 0 0 1 4.35 1.09c.123.199 12.376 20.232 34.578 28.618 6.255 2.37 12.888 3.762 19.304 5.118 12.262 2.587 24.894 5.25 34.569 14.764.104-.105.209-.209.322-.303.18-3.052.37-5.487.531-6.406.019-.124.047-.247.076-.37-.067-.237 1.09-6.17 7.799-6.17 0-.18-.01-.36-.01-.54z"/></svg>
+                <span id="current-agent">Security</span>
+            </div>
+
+            <div class="input-wrapper">
+                <textarea class="input-box" placeholder="Ask ContextSync..."></textarea>
+                <svg class="ai-sparkle" viewBox="0 0 24 24"><path d="M12 2l2.4 7.2h7.2l-5.76 4.32 2.16 7.2L12 16.8l-6 3.92 2.16-7.2L2.4 9.2h7.2z"/></svg>
+            </div>
+
+            <div class="action-group">
+                <button class="icon-btn" onclick="toggleMenu('conn-menu')" title="Data Sources">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/></svg>
+                </button>
+                
+                <button class="analyze-btn" onclick="runDiagnostics(this)">
+                    <span>ANALYZE</span>
+                    <svg width="10" height="10" fill="currentColor" viewBox="0 0 16 16"><path d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="memory-status">
+            <div>🔒 Local Index Active</div>
+            <div>12k Vectors</div>
+        </div>
+
+        <div class="popup-menu" id="model-menu">
+            <div class="menu-header">CLOUD MODELS</div>
+            <div class="menu-item selected" onclick="setModel(this, 'Gemini 1.5 Pro')">Gemini 1.5 Pro</div>
+            <div class="menu-item" onclick="setModel(this, 'ChatGPT-4o')">ChatGPT-4o</div>
+            <div class="menu-item" onclick="setModel(this, 'Claude 3.5 Sonnet')">Claude 3.5 Sonnet</div>
+            <div class="menu-header">LOCAL</div>
+            <div class="menu-item" onclick="setModel(this, 'Llama-3-8b')">Llama-3-8b</div>
+        </div>
+
+        <div class="popup-menu" id="agent-menu">
+            <div class="menu-header">SPECIALIST AGENT</div>
+            <div class="menu-item selected" onclick="setAgent(this, 'Security')">Security Auditor</div>
+            <div class="menu-item" onclick="setAgent(this, 'Performance')">Performance Eng</div>
+            <div class="menu-item" onclick="setAgent(this, 'Debug')">Debug Specialist</div>
+            <div class="menu-item" onclick="setAgent(this, 'Docs')">Documentation</div>
+        </div>
+
+        <div class="popup-menu" id="conn-menu">
+            <svg class="slider-icon slack connected" onclick="toggleIcon(this)" viewBox="0 0 24 24"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.522 2.521 2.527 2.527 0 0 1-2.522-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.522-2.522v-2.522h2.522zM15.165 17.688a2.527 2.527 0 0 1-2.522-2.522 2.527 2.527 0 0 1 2.522-2.522h6.312A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.521h-6.312z"/></svg>
+            <svg class="slider-icon jira connected" onclick="toggleIcon(this)" viewBox="0 0 24 24"><path d="M11.571 11.524v6.623c0 1.259-1.018 2.28-2.272 2.28-1.255 0-2.273-1.02-2.273-2.28V11.524h4.545zM11.571 6.848v2.28H7.026c-1.255 0-2.273-1.02-2.273-2.28 0-1.259 1.018-2.28 2.273-2.28h2.272c1.254 0 2.273 1.02 2.273 2.28zm5.682 4.676v6.598c0 1.259-1.018 2.28-2.273 2.28-1.254 0-2.272-1.02-2.272-2.28V11.524h4.545z"/></svg>
+            <svg class="slider-icon github connected" onclick="toggleIcon(this)" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            <svg class="slider-icon confluence" onclick="toggleIcon(this)" viewBox="0 0 50 50" style="fill:#2684FF"><path d="M 36.988281 2.9902344 C 36.519863 3.0093652 36.069688 3.2528906 35.804688 3.6816406 C 35.800688 3.6886406 35.795016 3.6941719 35.791016 3.7011719 C 35.411016 4.3361719 34.921672 5.1619219 34.388672 6.0449219 C 30.470672 13.059922 26.844437 11.486422 20.023438 8.2324219 L 10.609375 4.1308594 C 9.881375 3.7848594 9.0091094 4.0933125 8.6621094 4.8203125 C 8.6541094 4.8343125 8.6485781 4.846375 8.6425781 4.859375 L 4.1210938 14.705078 C 3.8020938 15.435078 4.1275625 16.285188 4.8515625 16.617188 C 6.8375625 17.551188 10.789703 19.411953 14.345703 21.126953 C 27.142703 27.335953 38.016938 26.934063 46.335938 13.414062 C 46.810938 12.641063 47.343875 11.742344 47.796875 11.027344 C 48.201875 10.343344 47.985594 9.4609687 47.308594 9.0429688 L 37.814453 3.2050781 C 37.557203 3.0464531 37.269332 2.9787559 36.988281 2.9902344 z M 21.050781 25.003906 C 14.442609 25.143818 8.6034688 28.546719 3.6640625 36.574219 C 3.1890625 37.347219 2.656125 38.245938 2.203125 38.960938 C 1.798125 39.644937 2.0144063 40.527312 2.6914062 40.945312 L 12.185547 46.783203 C 12.871547 47.206203 13.771312 46.994594 14.195312 46.308594 C 14.199312 46.301594 14.204984 46.294109 14.208984 46.287109 C 14.588984 45.652109 15.078328 44.828312 15.611328 43.945312 C 19.529328 36.930312 23.155563 38.501859 29.976562 41.755859 L 39.390625 45.859375 C 40.118625 46.205375 40.990891 45.896922 41.337891 45.169922 L 41.355469 45.130859 L 45.876953 35.285156 C 46.195953 34.555156 45.870484 33.705047 45.146484 33.373047 C 43.160484 32.439047 39.208344 30.578281 35.652344 28.863281 C 30.454375 26.340062 25.572162 24.908177 21.050781 25.003906 z"></path></svg>
+            <svg class="slider-icon trello" onclick="toggleIcon(this)" viewBox="0 0 50 50" style="fill:#0079BF"><path d="M41,4H9C6.24,4,4,6.24,4,9v32c0,2.76,2.24,5,5,5h32c2.76,0,5-2.24,5-5V9C46,6.24,43.76,4,41,4z M21,36c0,1.1-0.9,2-2,2h-7 c-1.1,0-2-0.9-2-2V12c0-1.1,0.9-2,2-2h7c1.1,0,2,0.9,2,2V36z M40,24c0,1.1-0.9,2-2,2h-7c-1.1,0-2-0.9-2-2V12c0-1.1,0.9-2,2-2h7 c1.1,0,2,0.9,2,2V24z"></path></svg>
+            <svg class="slider-icon notion" onclick="toggleIcon(this)" viewBox="0 0 50 50" style="fill:#fff"><path d="M44.62 13.13c-.23-.21-.52-.33-.83-.33-.02 0-.05.01-.08.01l-29.86 1.92c-.63.04-1.13.58-1.13 1.21v28.75c0 .34.14.65.38.88.25.23.57.35.91.33l29.86-1.93C44.51 43.93 45 43.4 45 42.76V14.02C45 13.68 44.87 13.36 44.62 13.13zM38.11 20.92c-.6.19-.79.2-.79.2v17.24c-1.02.55-1.86.81-2.74.81-1.07 0-1.68-.24-2.5-1.5-1.74-2.69-7.41-11.81-7.41-11.81v11.45l2.23.47c0 0-.06 1.3-2.01 1.45-1.71.13-5.44.32-5.44.32 0-.47.1-1.12.84-1.31.35-.09 1.4-.37 1.4-.37V22.42h-2.24c0-1.03.3-1.83 1.38-1.91l5.79-.33 7.73 11.92V21.49l-2.24-.19c0-.93.9-1.5 1.67-1.58l5.04-.28C38.82 20.09 38.79 20.7 38.11 20.92zM4.98 8.54l5.74 5.74v29.54L5.6 37.66c-.41-.58-.62-1.25-.62-1.96V8.54zM42.72 10.91l-29.06 1.83c-.99.07-1.95-.3-2.65-.99L6.24 6.97l27.19-1.89c.81-.07 1.62.17 2.28.66L42.72 10.91z"></path></svg>
+            <svg class="slider-icon teams" onclick="toggleIcon(this)" viewBox="0 0 16 16" style="fill:#6264A7"><path d="M9.186 4.797a2.42 2.42 0 1 0 -2.86 -2.448h1.178c0.929 0 1.682 0.753 1.682 1.682zm-4.295 7.738h2.613c0.929 0 1.682 -0.753 1.682 -1.682V5.58h2.783a0.7 0.7 0 0 1 0.682 0.716v4.294a4.197 4.197 0 0 1 -4.093 4.293c-1.618 -0.04 -3 -0.99 -3.667 -2.35Zm10.737 -9.372a1.674 1.674 0 1 1 -3.349 0 1.674 1.674 0 0 1 3.349 0m-2.238 9.488 -0.12 -0.002a5.2 5.2 0 0 0 0.381 -2.07V6.306a1.7 1.7 0 0 0 -0.15 -0.725h1.792c0.39 0 0.707 0.317 0.707 0.707v3.765a2.6 2.6 0 0 1 -2.598 2.598z"/><path d="M0.682 3.349h6.822c0.377 0 0.682 0.305 0.682 0.682v6.822a0.68 0.68 0 0 1 -0.682 0.682H0.682A0.68 0.68 0 0 1 0 10.853V4.03c0 -0.377 0.305 -0.682 0.682 -0.682Zm5.206 2.596v-0.72h-3.59v0.72h1.357V9.66h0.87V5.945z"/></svg>
+            <svg class="slider-icon discord" onclick="toggleIcon(this)" viewBox="0 0 24 24" style="fill:#5865F2"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+            <svg class="slider-icon whatsapp" onclick="toggleIcon(this)" viewBox="0 0 24 24" style="fill:#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.88 9.884"/></svg>
+            <svg class="slider-icon telegram" onclick="toggleIcon(this)" viewBox="0 0 24 24" style="fill:#2481cc"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.44l-1.92 9.07c-.14.64-.52.8-1.05.5l-2.91-2.14-1.4 1.35c-.16.15-.29.28-.59.28l.21-2.96 5.39-4.87c.23-.21-.05-.33-.36-.12l-6.66 4.19-2.87-.9c-.63-.2-.64-.62.13-.92l11.22-4.32c.52-.19.97.12.81.84z"/></svg>
+        </div>
+
+    </div>
+
+    <script>
+        // Init Mermaid
+        mermaid.initialize({ startOnLoad: false, theme: 'dark', flowchart: { curve: 'linear' } });
+
+        // Logic Helpers
+        function toggleMenu(menuId) {
+            document.querySelectorAll('.popup-menu').forEach(el => {
+                if (el.id !== menuId) el.classList.remove('visible');
+            });
+            document.getElementById(menuId).classList.toggle('visible');
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.popup-menu') && !e.target.closest('.model-pill') && !e.target.closest('.agent-trigger') && !e.target.closest('.icon-btn')) {
+                document.querySelectorAll('.popup-menu').forEach(el => el.classList.remove('visible'));
+            }
+        });
+
+        function setModel(el, name) {
+            document.getElementById('current-model').innerText = name;
+            document.querySelectorAll('#model-menu .menu-item').forEach(i => i.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('model-menu').classList.remove('visible');
+        }
+
+        function setAgent(el, name) {
+            document.getElementById('current-agent').innerText = name;
+            document.querySelectorAll('#agent-menu .menu-item').forEach(i => i.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('agent-menu').classList.remove('visible');
+        }
+
+        function toggleIcon(el) { el.classList.toggle('connected'); }
+
+        async function switchTab(viewId, tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            if (viewId === 'list') {
+                document.getElementById('list-view').style.display = 'flex';
+                document.getElementById('graph-view').style.display = 'none';
+            } else if (viewId === 'graph') {
+                document.getElementById('list-view').style.display = 'none';
+                document.getElementById('graph-view').style.display = 'flex';
+                
+                const container = document.getElementById('mermaid-container');
+                container.innerHTML = `
+                    <div class="mermaid">
+                    graph TD;
+                    Code[RetryLogic.ts]:::code;
+                    Jira[(BUG-402)]:::jira;
+                    Slack( #backend-ops ):::slack;
+                    Warn{{ RISK }}:::warn;
+                    Code -->|Linked| Jira;
+                    Jira -->|Context| Slack;
+                    Slack -.- |Flagged| Warn;
+                    Warn ==> Code;
+                    classDef code fill:#0d1117,stroke:#238636,stroke-width:2px,color:#fff;
+                    classDef jira fill:#0d1117,stroke:#0052CC,stroke-width:2px,color:#fff;
+                    classDef slack fill:#0d1117,stroke:#E01E5A,stroke-width:2px,color:#fff;
+                    classDef warn fill:#2a0f0f,stroke:#ff6a6a,stroke-width:2px,color:#ff6a6a;
+                    linkStyle default stroke:#58a6ff,stroke-width:1px;
+                    </div>
+                `;
+                await mermaid.run({ nodes: [container.querySelector('.mermaid')] });
+            }
+        }
+
+        function runDiagnostics(btn) {
+            btn.classList.add('scanning');
+            document.getElementById('welcome-msg').style.display = 'none';
+            
+            const container = document.getElementById('results-container');
+            container.innerHTML = '';
+
+            setTimeout(() => {
+                const verdictHTML = `
+                    <div class="tech-card card-risk">
+                        <div class="card-header">
+                            <span>CRITICAL ALERT</span>
+                            <span>GEMINI PRO</span>
+                        </div>
+                        <div class="card-body">
+                            <strong>Missing Idempotency Key</strong> detected.<br>
+                            High probability of <em>Double Charging</em> based on incident history.
+                        </div>
+                        <div class="card-meta">
+                            <span>CONFIDENCE: 98%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="section-label">
+                        <span>EVIDENCE: CHROMADB RESULTS</span>
+                        <span>SCORE: 0.95</span>
+                    </div>
+
+                    <div class="tech-card card-slack">
+                        <div class="card-header"><span>SLACK</span><span style="opacity:0.6">@Sarah</span></div>
+                        <div class="card-body">"Warning: API Gateway needs UUID for retries."</div>
+                        <div class="card-meta"><span>#backend-ops</span></div>
+                    </div>
+                    
+                    <div class="tech-card card-jira">
+                        <div class="card-header"><span>JIRA</span><span style="opacity:0.6">BUG-402</span></div>
+                        <div class="card-body"><strong>Resolution:</strong> Implemented Idempotency-Key.</div>
+                        <div class="card-meta"><span>CLOSED</span></div>
+                    </div>
+                `;
+                container.innerHTML = verdictHTML;
+                btn.classList.remove('scanning');
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

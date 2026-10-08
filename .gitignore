@@ -1,0 +1,21 @@
+# Executables & Compiled Binaries
+*.exe
+*.out
+*.o
+*.obj
+*.app
+*.dll
+*.so
+*.dylib
+
+# IDEs and Editors
+.vscode/
+.cph/
+.idea/
+*.swp
+*~
+
+# Temporary & Test files
+temp.cpp
+*.tmp
+*.log

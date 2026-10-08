@@ -1,0 +1,55 @@
+# Competitive Programming & Codeforces Solutions History 🚀
+
+Welcome to my **Competitive Programming (CP) Repository**! This repository serves as a archive of my problem-solving journey across Codeforces, algorithmic courses (DAA, Graph Theory, Dynamic Programming), and competitive contests.
+
+> [!NOTE]  
+> **Private Contests & Problem Setting**: I have conducted numerous private contests and served as a **Problem Setter** for my college contests as well as several private Discord competitive programming groups. A separate folder dedicated to my problem-setting work and problem sets will be added here soon!
+
+---
+
+## 💡 About `LEARNINGS.cpp`
+
+A core highlight of this repository is [`LEARNINGS.cpp`](./LEARNINGS.cpp).
+
+* **What it is**: `LEARNINGS.cpp` is a continuous log of concepts, STL tricks, mathematical shortcuts, bitwise hacks, prefix-sum methods, graph algorithms, and DP patterns accumulated **day-by-day and contest-by-contest** since the very beginning of my CP journey.
+* **Purpose**: It is **not a newly created file**—it is an old, actively maintained master reference file that I regularly use for revising methodologies, edge cases, and algorithmic templates prior to and during contests.
+* **Topics Included**:
+  * STL Utilities & Fast I/O (`min_element`, `is_sorted`, `rotate`, `iota`, `exchange`)
+  * Bitwise Operations & Hacks (`__builtin_clzll`, Clz optimizations, Bitmask DP)
+  * Math & Number Theory (Fast Exponentiation with Modulo, Linear Diophantine Equations, GCD Properties)
+  * Array & Prefix Sum Tricks (Left/Right Median calculations, Sliding Window, Coordinate Compression)
+  * Graph Theory & Tree Algorithms (2-Coloring DFS, Minimal DSU Structs, Sweep Line Algorithm)
+  * Dynamic Programming Patterns & Modulo Optimizations
+
+---
+
+## 📁 Repository Structure
+
+* **Codeforces Problem Solutions**: Solutions categorized by problem index (`A_*.cpp`, `B_*.cpp`, `C_*.cpp`, `D_*.cpp`, `E_*.cpp`, `F_*.cpp`, `G_*.cpp`, `H_*.cpp`).
+* **Topic-Specific Files & Folders**:
+  * `LEARNINGS.cpp` - Master learning log and cheat sheet.
+  * `GRAPHS_LEARNING.cpp` - Graph algorithms & traversal implementations.
+  * `DP/` - Dynamic Programming solutions and templates.
+  * `DAA_*.cpp` - Design & Analysis of Algorithms course implementations (Fibonacci, Power Calc, Sorting).
+  * `BACKUP.cpp` & `AnswerGrader.cpp` - Utility scripts and contest helpers.
+
+---
+
+## 👤 Profiles & Important Note
+
+* **Codeforces Profile**: [Your_Fav_Varsh](https://codeforces.com/profile/Your_Fav_Varsh)
+
+### ⚠️ Important Note Regarding Profile Status
+
+> [!IMPORTANT]  
+> My Codeforces profile (`Your_Fav_Varsh`) is currently temporarily disabled / taken down for a few months due to an **unfortunate misunderstanding during a Div 3 contest**.
+> 
+> **What Happened**:  
+> To replicate the real pressure and intensity of a live contest, my team and I decided to attempt the Div 3 contest live together. For our mutual understanding and fast communication during the session, we typed code comments in regional languages (**Telugu / Tamil**). This combination of live team collaboration and non-English code comments inadvertently triggered Codeforces' automated detection system, resulting in a temporary flag and account restriction for a few months.
+> 
+> **Integrity Statement**:  
+> I want to state with 100% clarity and conviction that **I have nowhere carried out any plagiarism, code sharing, or AI-assisted cheating in my entire coding history**. Every solution, logic, and learning in this repository reflects genuine effort, independent problem-solving, and continuous improvement.
+
+---
+
+*Maintained by [Varshith-24051](https://github.com/Varshith-24051)*
